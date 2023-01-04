@@ -1,3 +1,5 @@
+const chalk = require("chalk");
+
 export class Board<T>{
     piece_list: Array<Array<Piece<T>>>
     type_list: Array<T>
@@ -54,7 +56,7 @@ export class Board<T>{
         }
         return out_type
     }
-
+    
     getPiece(position: Position): Piece<T> | undefined {
         if (this.piece_list.length > position.getRow() && position.getRow() >= 0) {
             if (this.piece_list[position.getRow()].length > position.getCol() && position.getCol() >= 0) {
@@ -72,6 +74,7 @@ export class Board<T>{
     }
 
     remove(position: Position) {
+        //console.log(chalk.red("Removing Position of: ",position," Content: ",this.getPiece(position).getType()))
         let target = this.getPiece(position)
         if (target != undefined) {
             target.setType(null)
@@ -103,20 +106,22 @@ export class Board<T>{
     }
 
     moveInRule(first: Position, second: Position){
+        console.log(chalk.green("<Board> Moving:",first,second))
+        let remove_num = 0
         if (this.canMove(first, second)) {
             this.move(first,second)
             if (this.row_decution([first,second])){
-                this.pieceDropDown()
+                remove_num += this.pieceDropDown()
                 while (this.row_decution(null))
                 {
-                    this.pieceDropDown()
+                    remove_num += this.pieceDropDown()
                 }
-                return true
+                return remove_num
             }else{
                 this.move(first,second)
             }
         }
-        return false
+        return remove_num
     }
 
     addListener(listener: BoardListener<T>) {
@@ -143,7 +148,7 @@ export class Board<T>{
         return out_str
     }
 
-    pieceDropDown(){
+    pieceDropDown():number{
         let need_type_list: Array<Piece<T>> = []
         for (var col_i = 0; col_i < this.size[1]; col_i++) {
             let drop_type_list:Array<T> = []
@@ -162,7 +167,7 @@ export class Board<T>{
                 }
             }
             let n = 0
-            for (var row_i = drop_position.getRow()-1; row_i >= 0; row_i--) {
+            for (var row_i = drop_position.getRow(); row_i >= 0; row_i--) {
                 let position = new Position(row_i, col_i)
                 let piece = this.getPiece(position)
                 if (n<drop_type_list.length){
@@ -177,6 +182,7 @@ export class Board<T>{
         need_type_list.forEach(piece=>{
             piece.setType(this.chooseType(piece.getPosition()))
         })
+        return need_type_list.length
     }
 
     row_decution(l_position: Position[] | null) {
@@ -232,7 +238,7 @@ export class Board<T>{
         //console.log(chalk.yellow("Starting VET check at ", start_point.row, start_point.col));
         position_array.push(start_point)
         for (var i = 1; i < this.size[1]; i++) {
-            // console.log(chalk.bgRed("SEQ",x));
+             //console.log(chalk.bgRed("SEQ",x));
             let check_point = new Position(i, col)
              //console.log(chalk.cyan("Checking", check_point.row, check_point.col, "|", this.getPiece(check_point)?.getType()));
             if (this.getPiece(start_point)?.getType() == this.getPiece(check_point)?.getType()) {
@@ -240,11 +246,12 @@ export class Board<T>{
                 //console.log(chalk.bgRed(check_point.col + 1 >= this.size[1] && position_array.length >= 3 || check_point.col - 1 <= 0 && position_array.length >= 3 || check_point.row + 1 >= this.size[0] && position_array.length >= 3 || check_point.row - 1 <= 0 && position_array.length >= 3));
                 if (check_point.col + 1 >= this.size[1] && position_array.length >= 3 || check_point.col - 1 <= 0 && position_array.length >= 3 || check_point.row + 1 >= this.size[0] && position_array.length >= 3 || check_point.row - 1 <= 0 && position_array.length >= 3) {
                     //console.log(chalk.green("Array compelete, size: ", position_array.length, "| Array content: ", position_array))
+                    let removed_type = this.getPiece(position_array[0]).getType()
                     position_array.forEach(po => {
                         this.remove(po)
                     })
                     removed = true
-                    //console.log(chalk.cyan("Element removed in chart, position: ", position_array))
+                    console.log(chalk.cyan("Element removed in chart, position: ", position_array,"Element Value: ",removed_type))
                     position_array = []
                     x += 1
                     start_point = new Position(x, col)
@@ -259,11 +266,12 @@ export class Board<T>{
                 if (position_array.length >= 3) {
                     //满足条件删除（>=3）
                     //console.log(chalk.green("Array compelete, size: ", position_array.length, "| Array content: ", position_array))
+                    let removed_type = this.getPiece(position_array[0]).getType()
                     position_array.forEach(po => {
                         this.remove(po)
                     })
                     removed = true
-                    //console.log(chalk.cyan("Element removed in chart, position: ", position_array))
+                    console.log(chalk.cyan("Element removed in chart, position: ", position_array,"Element Value: ",removed_type))
                     position_array = []
                     x += 1
                     start_point = new Position(x, col)
@@ -296,11 +304,12 @@ export class Board<T>{
                 position_array_h.push(check_point_h)
                 if (check_point_h.col + 1 >= this.size[1] && position_array_h.length >= 3 || check_point_h.col - 1 <= 0 && position_array_h.length >= 3 || check_point_h.row + 1 >= this.size[0] && position_array_h.length >= 3 || check_point_h.row - 1 <= 0 && position_array_h.length >= 3) {
                     //console.log(chalk.green("Array compelete, size: ", position_array_h.length, "| Array content: ", position_array_h))
+                    let removed_type = this.getPiece(position_array_h[0]).getType()
                     position_array_h.forEach(po => {
                         this.remove(po)
                     })
                     removed = true
-                    //console.log(chalk.cyan("Element removed in chart, position: ", position_array_h))
+                    console.log(chalk.cyan("Element removed in chart, position: ", position_array_h,"Element Value: ",removed_type))
                     position_array_h = []
                     x += 1
                     start_point_h = new Position(row, x)
@@ -314,6 +323,7 @@ export class Board<T>{
             }
             else {
                 if (position_array_h.length >= 3) {
+                    let removed_type = this.getPiece(position_array_h[0]).getType()
                     //满足条件删除（>=3）
                     //console.log(chalk.green("Array compelete, size: ", position_array_h.length, "| Array content: ", position_array_h))
                     position_array_h.forEach(po => {
@@ -322,7 +332,7 @@ export class Board<T>{
                     removed = true
                     x += 1
                     start_point_h = new Position(row, x)
-                    //console.log(chalk.cyan("Element removed in chart, position: ", position_array_h))
+                    console.log(chalk.cyan("Element removed in chart, position: ", position_array_h,"Element Value: ",removed_type))
                 }
                 //console.log(chalk.red("Cleaning array :", " pushed new content:", this.getPiece(check_point_h)?.getType(), "Not Match with ", this.getPiece(start_point_h)?.getType()))
                 position_array_h = []

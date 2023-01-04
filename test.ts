@@ -14,7 +14,7 @@ function testLogout(){
     console.log(user_store.getUser())
     console.log("Error: "+user_store.getError())
 
-    login("A","222")
+    login("B","222")
 }
 
 function testUserInfo(){
@@ -50,4 +50,4 @@ user_store.addLogoutListener(testLogout)
 user_store.addUserInfoListener(testUserInfo)
 user_store.addErrorListener(testError)
 
-login("A","111")
+login("B","222")

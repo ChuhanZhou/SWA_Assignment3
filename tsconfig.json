@@ -1,12 +1,17 @@
 {
+    "ts-node": {
+        "compilerOptions": {
+            "module": "commonjs"
+        }
+    },
     "compilerOptions": {
-    "outDir": "./dist/",
-    "sourceMap": true,
-    "noImplicitAny": true,
-    "module": "esnext",
-    "target": "es2017",
-    "jsx": "react",
-    "allowJs": true,
-    "moduleResolution": "node",
+        "outDir": "./dist/",
+        "sourceMap": true,
+        "noImplicitAny": false,
+        "target": "es5",
+        "jsx": "react",
+        "allowJs": true,
+        "module": "esnext",
+        "moduleResolution": "node"
     }
 }
