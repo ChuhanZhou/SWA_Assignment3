@@ -2,9 +2,9 @@ import { Position } from "./js/models/board";
 import gamestore from "./js/stores/gameStore"
 import { Rules } from "./js/models/rules";
 import { v4 as uuidv4 } from 'uuid';
-import { getAllGameData, getGameData, postGameData } from "./js/actions/gameAction"
+import game_action from "./js/actions/gameAction"
 import user_store from "./js/stores/userStore";
-import { login, register } from "./js/actions/userAction";
+import user_action from "./js/actions/userAction";
 const chalk = require("chalk");
 
 let uuid = uuidv4()
@@ -34,7 +34,7 @@ function testLogin() {
     }
     console.log(chalk.cyan("User ID", user.id, " | Token", token))
     // getAllGameData(user.id, token)
-    postGameData(game,user.id,token)
+    game_action.postGameData(game,user.id,token)
 }
 
 function testError() {
@@ -46,4 +46,4 @@ user_store.addLoginListener(testLogin)
 user_store.addErrorListener(testError)
 // user_store.addLoginListener(testLogin)
 //login("A", "111")
-login("B", "111")
+user_action.login("B", "111")

@@ -1,4 +1,4 @@
-import { register, login,logout, getUserInfo,updateUserInfo } from './js/actions/userAction';
+import user_action from './js/actions/userAction';
 import user_store from './js/stores/userStore';
 let a = 0
 function testLogin(){
@@ -14,7 +14,7 @@ function testLogout(){
     console.log(user_store.getUser())
     console.log("Error: "+user_store.getError())
 
-    login("B","222")
+    user_action.login("B","222")
 }
 
 function testUserInfo(){
@@ -30,10 +30,10 @@ function testUserInfo(){
         }else{
             old.changePassword("222","111")
         }
-        updateUserInfo(old,user_store.getToken())
+        user_action.updateUserInfo(old,user_store.getToken())
         a=1
     }else{
-        logout(user_store.getToken())
+        user_action.logout(user_store.getToken())
         a=0
     }
 }
@@ -50,4 +50,4 @@ user_store.addLogoutListener(testLogout)
 user_store.addUserInfoListener(testUserInfo)
 user_store.addErrorListener(testError)
 
-login("B","222")
+user_action.login("B","222")
