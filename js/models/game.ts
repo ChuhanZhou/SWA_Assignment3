@@ -26,11 +26,11 @@ export class Game {
     console.log(chalk.green("[Game_obj] created UUID for game: ", this.id))
   }
 
-  get user_id(): number {
+  get userId(): number {
     return this.user;
   }
 
-  set user_id(value: number) {
+  set userId(value: number) {
     this.user = value;
   }
 

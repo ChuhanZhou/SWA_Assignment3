@@ -3,7 +3,7 @@ import * as React from 'react'
 import user_action from '../actions/userAction'
 import user_store from '../stores/userStore'
 import { User } from '../models/user';
-import { render } from 'react-dom'
+import * as ReactDOM from 'react-dom'
 import {Link} from 'react-router-dom'
 
 function userLogin(p: Props) {
@@ -14,20 +14,20 @@ function userLogin(p: Props) {
 const loginUser : React.FC<Props> = (props) => {
     const { username,password,loginU,error } = props
     return (<form className='loginForm'>
-        <div>Username : </div><input className='username' value={username}></input>
-        <div>Password : </div><input className='password' value={password}></input>
+        <div>Username : </div><input id='usernameL' value={username}></input>
+        <div>Password : </div><input id='passwordL' value={password}></input>
         <label className='error'></label>
-        <button onClick={()=>loginU}>Login</button>
+        <button id='btnL' onClick={()=>loginU}>Login</button>
         </form>)
 }
 
 const registerUser : React.FC<Props> = (props) => {
     const { username,password,registerU,error } = props
     return (<form className='loginForm'>
-        <div>Username : </div><input className='username' value={username}></input>
-        <div>Password : </div><input className='password' value={password}></input>
+        <div>Username : </div><input id='usernameR' value={username}></input>
+        <div>Password : </div><input id='passwordR' value={password}></input>
         <label className='error'></label>
-        <button onClick={()=>registerU}>Register</button>
+        <button id='btnR' onClick={()=>registerU}>Register</button>
         </form>)
 }
 
@@ -45,6 +45,7 @@ interface IUserActionProps {
   updateProfile: (profile:React.ChangeEvent<HTMLTextAreaElement>)=>void
   changePassword: (old_password:React.ChangeEvent<HTMLInputElement>,new_password:React.ChangeEvent<HTMLInputElement>)=>void
 }
+
 type Props = IUserStateProps & IUserActionProps
 
 const mapStateToProps = (): IUserStateProps => {
