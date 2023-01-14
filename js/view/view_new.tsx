@@ -1,9 +1,11 @@
-import * as React from 'react'
-
-import user_action from '../actions/userAction'
-import user_store from '../stores/userStore'
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import user_action from '../actions/userAction';
+import user_store from '../stores/userStore';
 import { User } from '../models/user';
-import { render } from 'react-dom'
+ReactDOM.render(
+  <div>1</div>,document.getElementById('root')
+);
 
 const loginUser : React.FC<Props> = (props) => {
     const { username,password,loginU,error } = props
@@ -11,7 +13,7 @@ const loginUser : React.FC<Props> = (props) => {
         <div>Username : </div><input className='username' value={username}></input>
         <div>Password : </div><input className='password' value={password}></input>
         <label className='error'></label>
-        <button onClick={loginU}>Login</button>
+        <button onClick={()=>loginU}>Login</button>
         </form>)
 }
 
@@ -21,7 +23,7 @@ const registerUser : React.FC<Props> = (props) => {
         <div>Username : </div><input className='username' value={username}></input>
         <div>Password : </div><input className='password' value={password}></input>
         <label className='error'></label>
-        <button onClick={registerU}>Register</button>
+        <button onClick={()=>registerU}>Register</button>
         </form>)
 }
 
@@ -81,4 +83,3 @@ user_store.addLogoutListener(mapUserActionToProps)
 user_store.addUserInfoListener(mapUserActionToProps)
 user_store.addErrorListener(mapUserActionToProps)
 
-export default ;
