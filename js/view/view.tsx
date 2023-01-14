@@ -4,8 +4,16 @@ import {UserAction} from '../actions/userAction'
 import {UserStore} from '../stores/userStore'
 import { User } from '../models/user';
 import { render } from 'react-dom'
+import {Link} from 'react-router-dom'
 
+function userLogin(p: Props) {
+  const { username,password,loginU,userInfo} = p
+  return (<Link to={{ pathname: '/home', state : { userInfo} }}/>)
+}
 
+function registerUS(){
+  registerUser;
+}
 
 const loginUser : React.FC<Props> = (props) => {
     const { username,password,loginU,error } = props
@@ -13,7 +21,7 @@ const loginUser : React.FC<Props> = (props) => {
         <div>Username : </div><input className='username' value={username}></input>
         <div>Password : </div><input className='password' value={password}></input>
         <label className='error'></label>
-        <button onClick={loginU}>Login</button>
+        <button onClick={userLogin}>Login</button>
         </form>)
 }
 
@@ -86,4 +94,4 @@ UserStore.addLogoutListener(mapUserActionToProps)
 UserStore.addUserInfoListener(mapUserActionToProps)
 UserStore.addErrorListener(mapUserActionToProps)
 
-export default ;
+export default registerUS;

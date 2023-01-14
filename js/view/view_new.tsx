@@ -1,11 +1,15 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import user_action from '../actions/userAction';
-import user_store from '../stores/userStore';
+import * as React from 'react'
+
+import user_action from '../actions/userAction'
+import user_store from '../stores/userStore'
 import { User } from '../models/user';
-ReactDOM.render(
-  <div>1</div>,document.getElementById('root')
-);
+import { render } from 'react-dom'
+import {Link} from 'react-router-dom'
+
+function userLogin(p: Props) {
+  const { username,password,loginU,userInfo} = p
+  return (<Link to={{ pathname: '/home', state : { userInfo} }}/>)
+}
 
 const loginUser : React.FC<Props> = (props) => {
     const { username,password,loginU,error } = props
