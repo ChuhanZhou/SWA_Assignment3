@@ -4,12 +4,12 @@ const chalk = require("chalk");
 export class Game {
 
   private id: string;
-  private user: number;
+  private user_id: number;
   private score: number;
   private completed: boolean = false;
 
   constructor(user_id: number, score: number) {
-    this.user = user_id;
+    this.user_id = user_id;
     this.score = score;
   }
 
@@ -26,12 +26,12 @@ export class Game {
     console.log(chalk.green("[Game_obj] created UUID for game: ", this.id))
   }
 
-  get userId(): number {
-    return this.user;
+  getUser_id(): number {
+    return this.user_id
   }
 
-  set userId(value: number) {
-    this.user = value;
+  setUser_id(value: number) {
+    this.user_id = value;
   }
 
   getScore(): number {
