@@ -7,8 +7,7 @@ import * as ReactDOM from 'react-dom'
 import {render} from 'react-dom'
 import {Link, Router} from 'react-router-dom'
 import { useState, useEffect } from 'react';
-
-
+import Home from "./home";
 
 var username = undefined;
 var password = undefined;
@@ -21,18 +20,18 @@ class UserLoginAndRegister extends React.Component{
       password = document.getElementById('password') as HTMLInputElement;
       error = document.getElementById('errorRL') as HTMLLabelElement;
       
-      user_store.addLoginListener(()=>{console.log("login successed")}) 
-      user_store.addErrorListener(hasError)
+      user_store.addLoginListener(loginSuccessed) 
+      user_store.addErrorListener(updateError)
     }
 
-    render() {return (<form className='loginForm'>
-    <div>Username : </div><input id='username'></input>
-    <div>Password : </div><input id='password'></input>
-    <label id='errorRL' style={{color:'red'}}></label>    
-      <button type='button' id='btnL' onClick={()=>loginUser()}>Login</button>
-    <button type='button' id='btnR' onClick={()=>registerUser()}>Register</button>
-    </form>
-    
+    render() {return (
+      <form className='loginForm'>
+        <div>Username : </div><input id='username'></input>
+        <div>Password : </div><input id='password'></input>
+        <label id='errorRL' style={{color:'red'}}></label>    
+        <button type='button' id='btnL' onClick={()=>loginUser()}>Login</button>
+        <button type='button' id='btnR' onClick={()=>registerUser()}>Register</button>
+      </form>
     )}
     
     
@@ -60,25 +59,21 @@ function getError(){
 }
 
 function loginUser(){
-      console.log("login")
-      //username = document.getElementById('username') as HTMLInputElement;
-      console.log(getUserName().value)
-      user_action.login(getUserName().value,getPassword().value);
-      
+  user_action.login(getUserName().value,getPassword().value);
 }
 
 function registerUser(){
   user_action.register(getUserName().value,getPassword().value);
-  console.log("resgister")
 }
 
-function hasError(){
+function updateError(){
   getError().textContent = user_store.getError();
-  console.log("error");
 }
 
-
-
+function loginSuccessed(){
+  updateError()
+  ReactDOM.render(<Home/>, document.getElementById('root'));
+}
 
 interface IUserStateProps {
     username?: string

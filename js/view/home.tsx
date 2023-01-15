@@ -132,4 +132,10 @@ export class ShowHome extends React.Component<{},{username:string,password:strin
     this.props.history.push({ pathname: '/game' })
   }
 
+  function Home() {
+    return (<ShowHome/>)
+  }
+  
+  export default Home;
+
 
