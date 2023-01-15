@@ -13,18 +13,26 @@ export class GameBoard extends React.Component<{},{pieceList:Piece<string>[][],s
        let type_list = ["A", "B", "C"]
         let size = [6, 6]
         game_store.initGame(10, type_list, size)
-        let gameBoard = game_store.getBoard().getGameBoard()
         itemsSelected =[]
 
        this.state = {
-         pieceList: gameBoard.piece_list,
+         pieceList: game_store.getBoard().getGameBoard().piece_list,
          steps: game_store.getBoard().getOut_steps(),
          points: game_store.getBoard().getPoints()
        };
 
+       setInterval(() => {
+        this.setState({
+            pieceList: game_store.getBoard().getGameBoard().piece_list,
+            steps: game_store.getBoard().getOut_steps(),
+            points: game_store.getBoard().getPoints()
+        })
+    }, 1000)
+
+
     }
 
-      getPieces = game_store.getBoard().getGameBoard().piece_list.map((pieces,index) => {
+      getPieces=this.state.pieceList.map((pieces,index) => {
         return pieces.map((piece,j)=>{
             var idt = 'borad-item'+piece.getPosition().getRow()+piece.getPosition().getCol()
             return (<button style={{}} className='board-item' id={idt} onClick={()=>clickItem(piece.getPosition())}>{piece.type}</button>)

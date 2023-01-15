@@ -1,4 +1,4 @@
-const chalk = require("chalk");
+//const chalk = require("chalk");
 import dispatcher from "../dispatcher";
 import { Game } from "../models/game";
 import { Rules } from "../models/rules";
@@ -12,7 +12,7 @@ class GameAction {
         let gameArray = new Array<Game>
         var xhr = new XMLHttpRequest();
         let url = host + 'games' + "?token=" + token;
-        console.log(chalk.blue("Requesting: ", url));
+        console.log("Requesting: ", url);
 
         xhr.open("GET", url, true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -21,7 +21,7 @@ class GameAction {
                 if (xhr.status == 200) {
                     let info = xhr.responseText;
                     let size = JSON.parse(info).length;
-                    console.log(chalk.green("Info: ", info, "\nLength: ", size))
+                    console.log("Info: ", info, "\nLength: ", size)
                     JSON.parse(info).forEach(obj => {
                         let game = new Game(obj.user, obj.score)
                         game.setCompleted(obj.completed)
@@ -35,7 +35,7 @@ class GameAction {
                         g_array: gameArray,
                     });
                 } else {
-                    console.log(chalk.bgRed("Wrong id/token"))
+                    console.log("Wrong id/token")
                     dispatcher.dispatch({
                         actionTypes: actionTypes.ERROR,
                         info: "wrong id or token",
@@ -50,7 +50,7 @@ class GameAction {
     getGameData(id: number, token: string) {
         var xhr = new XMLHttpRequest();
         let url = host + 'games/' + id + "?token=" + token;
-        console.log(chalk.blue("Requesting: ", url));
+        console.log("Requesting: ", url);
 
         xhr.open("GET", url, true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -59,7 +59,7 @@ class GameAction {
                 if (xhr.status == 200) {
                     let info = xhr.responseText;
                     let JSON_info = JSON.parse(info);
-                    console.log(chalk.green("Single Game: ", info))
+                    console.log("Single Game: ", info)
                     dispatcher.dispatch({
                         actionTypes: actionTypes.GAME_INFO,
                         info: info,
@@ -69,7 +69,7 @@ class GameAction {
                         completed: JSON_info.completed
                     });
                 } else {
-                    console.log(chalk.bgRed("Wrong id/token"))
+                    console.log("Wrong id/token")
                     dispatcher.dispatch({
                         actionTypes: actionTypes.ERROR,
                         info: "wrong id or token",
@@ -93,7 +93,7 @@ class GameAction {
 
 
         if (is_paused) {
-            console.log(chalk.red("This game is Paused, ES: ", is_ended, " PS: ", is_paused, "Score: ", _game.getScore()))
+            console.log("This game is Paused, ES: ", is_ended, " PS: ", is_paused, "Score: ", _game.getScore())
             _game.setScore(0)
             _game.setCompleted(false)
         }
@@ -104,7 +104,7 @@ class GameAction {
         // console.log(chalk.blue("Posting: ", url, "ES: ", is_ended, " PS: ", is_paused, " ID: ", _game.id, "Score: ",_game.score));
         let payload = JSON.stringify(_game)
 
-        console.log(chalk.blue("Posting sxhr: ", s_url));
+        console.log("Posting sxhr: ", s_url);
 
         s_xhr.open("POST", s_url, true);
         s_xhr.setRequestHeader("Content-Type", "application/json");
@@ -115,26 +115,26 @@ class GameAction {
                     let info = s_xhr.responseText;
                     const data = JSON.parse(info);
                     game_id = data.id;
-                    console.log(chalk.green("Generation Compelete: ", " Game ID: ", game_id))
+                    console.log("Generation Compelete: ", " Game ID: ", game_id)
                     dispatcher.dispatch({
                         actionTypes: actionTypes.GAME_POST,
                         info: info,
                     });
                     let url = host + 'games/' + game_id + "?token=" + token;
-                    console.log(chalk.blue("Posting: ", url, "\nPayload: ", payload));
+                    console.log("Posting: ", url, "\nPayload: ", payload);
                     xhr.open("PATCH", url, true);
                     xhr.setRequestHeader("Content-Type", "application/json");
                     xhr.onreadystatechange = function () {
                         if (xhr.readyState == 4) {
                             if (xhr.status == 200) {
                                 let info = xhr.responseText;
-                                console.log(chalk.green("Info: ", info))
+                                console.log("Info: ", info)
                                 dispatcher.dispatch({
                                     actionTypes: actionTypes.GAME_POST,
                                     info: info,
                                 });
                             } else {
-                                console.log(chalk.bgRed(xhr.status, " Wrong id/token"))
+                                console.log(xhr.status, " Wrong id/token")
                                 dispatcher.dispatch({
                                     actionTypes: actionTypes.ERROR,
                                     info: "Wrong id or token",
@@ -145,7 +145,7 @@ class GameAction {
                     xhr.send(payload);
 
                 } else {
-                    console.log(chalk.bgRed(s_xhr.status, " Wrong id/token"))
+                    console.log(s_xhr.status, " Wrong id/token")
                     dispatcher.dispatch({
                         actionTypes: actionTypes.ERROR,
                         info: "Wrong id or token",

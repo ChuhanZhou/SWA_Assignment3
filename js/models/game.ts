@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-const chalk = require("chalk");
+//const chalk = require("chalk");
 
 export class Game {
 
@@ -23,7 +23,7 @@ export class Game {
 
   generate_id() {
     this.id = uuidv4()
-    console.log(chalk.green("[Game_obj] created UUID for game: ", this.id))
+    console.log("[Game_obj] created UUID for game: ", this.id)
   }
 
   getUser_id(): number {
