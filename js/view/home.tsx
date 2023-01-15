@@ -9,7 +9,7 @@ import {Link,useLocation} from 'react-router-dom'
 import { useState, useEffect } from 'react';
 import { Score } from '../models/score';
 import View from "./view_new";
-import Game from "./game";
+import Gameboard from "./game";
 import * as ReactDOM from 'react-dom'
 
 
@@ -23,7 +23,7 @@ var textarea = undefined;
 //var profile:string;
 //var Profiledispaly= 'none';
 //var passdispaly= 'none'
-
+var timer
 export class ShowHome extends React.Component<{},{username:string,password:string,profile:string,Profiledispaly:string, passdispaly:string}> {
     constructor(props){
       super(props)
@@ -35,7 +35,7 @@ export class ShowHome extends React.Component<{},{username:string,password:strin
         passdispaly: 'none'
     }
 
-    setInterval(() => {
+    timer = setInterval(() => {
         this.setState({
           username : user_store.getUser().getUsername(),
           password : user_store.getUser().password,
@@ -58,6 +58,11 @@ export class ShowHome extends React.Component<{},{username:string,password:strin
       })
 
       
+    }
+
+    startGame(){
+      ReactDOM.render(<Gameboard/>, document.getElementById('root'));
+      clearTimeout(timer)
     }
 
     toChangePro(){
@@ -141,7 +146,7 @@ export class ShowHome extends React.Component<{},{username:string,password:strin
 
     <button type='button' onClick={()=>logout()}>Logout</button>
     <br/>
-    <button type='button' onClick={()=>startGame()}>Start Game</button>
+    <button type='button' onClick={()=>this.startGame()}>Start Game</button>
 </div>)}
     
     
@@ -245,7 +250,8 @@ export class ShowHome extends React.Component<{},{username:string,password:strin
   }
 
   function startGame(){
-    ReactDOM.render(<Game/>, document.getElementById('root'));
+    ReactDOM.render(<Gameboard/>, document.getElementById('root'));
+    //clearTimeout(this.timer)
   }
 
   function Home() {
