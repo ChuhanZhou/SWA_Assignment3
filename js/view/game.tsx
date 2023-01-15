@@ -7,30 +7,22 @@ import game_action from '../actions/gameAction'
 import { Position, BoardListener,Piece,Board } from '../models/board';
 
 var itemsSelected: Array<Position>;
-class GameBoard extends React.Component<{},{pieceList:Piece<string>[][],steps:number,points:number}> {
+export class GameBoard extends React.Component<{},{pieceList:Piece<string>[][],steps:number,points:number}> {
     constructor(props) {
-      super(props);
-      let type_list = ["A", "B", "C"]
-       let size = [6, 6]
-       game_store.initGame(10, type_list, size)
-       let gameBoard = game_store.getBoard().getGameBoard()
+      super(props)
+       let type_list = ["A", "B", "C"]
+        let size = [6, 6]
+        game_store.initGame(10, type_list, size)
+        let gameBoard = game_store.getBoard().getGameBoard()
+        itemsSelected =[]
 
-      this.state = {
-        pieceList: gameBoard.piece_list,
-        steps: game_store.getBoard().getOut_steps(),
-        points: game_store.getBoard().getPoints()
-      };
+       this.state = {
+         pieceList: gameBoard.piece_list,
+         steps: game_store.getBoard().getOut_steps(),
+         points: game_store.getBoard().getPoints()
+       };
 
     }
-
-    //handleClick(i) {
-        //const squares = this.state.squares.slice();
-        //squares[i] = this.state.xIsNext ? 'X' : 'O';
-       // this.setState({
-          //squares: squares,
-         // xIsNext: !this.state.xIsNext,
-       // });
-     // }
 
       getPieces = game_store.getBoard().getGameBoard().piece_list.map((pieces,index) => {
         return pieces.map((piece,j)=>{
@@ -45,10 +37,10 @@ class GameBoard extends React.Component<{},{pieceList:Piece<string>[][],steps:nu
             <div>Steps left:  {this.state.steps}</div>
             <div>Total Score: {this.state.points}</div>
           <div>
-            {this.getPieces}
+             {this.getPieces}
           </div>
           </div>
-        );
+        )
       }
 }
 
@@ -63,7 +55,11 @@ function clickItem(position:Position){
             itemsSelected =[]
             this.setState.points = game_store.getBoard().getPoints()
             this.setState.steps = game_store.getBoard().getOut_steps()
-        }   
+        }else{
+            game_action.getAllGameData(user_store.getUser().id,user_store.getToken())
+            game_action.postGameData(game_store.getBoard(),user_store.getUser().id,user_store.getToken())
+
+        }
     }
     else{
         itemsSelected.push(position)

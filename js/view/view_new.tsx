@@ -72,6 +72,7 @@ function updateError(){
 
 function loginSuccessed(){
   updateError()
+  user_store.removeAllListeners()
   ReactDOM.render(<Home/>, document.getElementById('root'));
 }
 

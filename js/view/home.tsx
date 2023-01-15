@@ -18,23 +18,28 @@ var NewPassword = undefined;
 var error = undefined;
 var textarea = undefined;
 
-export class ShowHome extends React.Component<{},{username:string,password:string,profile:string,Profiledispaly:string,passdispaly:string}>{
+var username:string;
+var password:string;
+var profile:string;
+var Profiledispaly= 'none';
+var passdispaly= 'none'
+
+export class ShowHome extends React.Component {
     constructor(props){
       super(props)
-      this.state = { username: user_store.getUser().getUsername(),
-      password: user_store.getUser().password,
-      profile: user_store.getUser().getProfile(),
-      Profiledispaly: 'none',
-      passdispaly: 'none'
-      }
-
+ 
       OldPassword = document.getElementById('oldP') as HTMLInputElement;
       NewPassword = document.getElementById('newP') as HTMLInputElement;
       error = document.getElementById('errorP') as HTMLLabelElement;
       textarea = document.getElementById('textarea') as HTMLTextAreaElement;
      
       user_store.addLogoutListener(()=>{console.log("logout")}) 
-      user_store.addUserInfoListener(()=>{console.log("userInfo changed")})
+      user_store.addUserInfoListener(()=>{
+        console.log("userInfo changed")
+        updateUserInfo()
+      })
+
+      
     }
 
     getScores=user_store.getUser().getHighScores().map((value:Score,index:number)=>{
@@ -46,11 +51,11 @@ export class ShowHome extends React.Component<{},{username:string,password:strin
     
 
     render() {return (<div className='userIn'>
-    <div>Hi! {this.state.username}</div>
-    <div>Description : {this.state.profile}</div>
+    <div>Hi! {username}</div>
+    <div>Description : {profile}</div>
 
-    <textarea id='textarea' style={{display:this.state.Profiledispaly}}></textarea>
-    <button type='button' style={{display:this.state.Profiledispaly}} onClick={()=>ChangePro}>save</button>
+    <textarea id='textarea' style={{display:Profiledispaly}}></textarea>
+    <button type='button' style={{display:Profiledispaly}} onClick={()=>ChangePro}>save</button>
 
     <div>Scores : </div>
     <div><table>
@@ -61,18 +66,24 @@ export class ShowHome extends React.Component<{},{username:string,password:strin
     <button type='button' onClick={()=>toChangePr()}>EditDescription</button>
     <button type='button' onClick={()=>toChangePa()}>Change password</button>
 
-    <div style={{display:this.state.passdispaly}}>Old password : </div><input id='oldP' style={{display:this.state.passdispaly}}></input>
-    <div style={{display:this.state.passdispaly}}>New password : </div><input id='newP' style={{display:this.state.passdispaly}}></input>
-    <label id='errorP' style={{display:'none',color:'red'}}></label>    
-    <button type='button' style={{display:'none'}} onClick={()=>toChangePa()}>save</button>
+    <div style={{display:passdispaly}}>Old password : </div><input id='oldP' style={{display:passdispaly}}></input>
+    <div style={{display:passdispaly}}>New password : </div><input id='newP' style={{display:passdispaly}}></input>
+    <label id='errorP' style={{display:passdispaly,color:'red'}}></label>    
+    <button type='button' style={{display:passdispaly}} onClick={()=>ChangeP()}>save</button>
 
-    <button type='button' onClick={()=>ChangeP()}>Change password</button>
     <button type='button' onClick={()=>logout()}>Logout</button>
     <br/>
     <button type='button' onClick={()=>startGame()}>Start Game</button>
 </div>)}
     
     
+  }
+
+  function updateUserInfo(){
+    username =user_store.getUser().getUsername();
+    password =  user_store.getUser().password;
+    profile =  user_store.getUser().getProfile();
+    console.log(username)
   }
 
   function getOldPassword(){
@@ -103,12 +114,12 @@ export class ShowHome extends React.Component<{},{username:string,password:strin
   }
 
   function toChangePa(){
-    this.state.passdispaly = 'block'
+    passdispaly = 'block'
 
   }
 
   function toChangePr(){
-    this.state.Profiledispaly = 'block'
+    Profiledispaly = 'block'
 
   }
 
@@ -116,7 +127,7 @@ export class ShowHome extends React.Component<{},{username:string,password:strin
     let old = user_store.getUser()
     if (old.isTruePassword(getOldPassword().value)){
       old.changePassword(getOldPassword().value,getNewPassword().value)
-      this.state.passdispaly = 'none'
+      passdispaly = 'none'
     }else{
         old.changePassword(getNewPassword().value,getOldPassword().value)
         error.textContent = "the old password is not correct"
@@ -128,11 +139,11 @@ export class ShowHome extends React.Component<{},{username:string,password:strin
     let old = user_store.getUser()
     old.setProfile(getNewProfile().textContent)
     user_action.updateUserInfo(old,user_store.getToken())
-    this.state.Profiledispaly = 'none'
+    Profiledispaly = 'none'
   }
 
   function startGame(){
-    ReactDOM.render(<Game/>, document.getElementById('root'));
+    //ReactDOM.render(<Game/>, document.getElementById('root'));
   }
 
   function Home() {
