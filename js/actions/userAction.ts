@@ -5,13 +5,16 @@ import { User } from '../models/user';
 var host = 'http://localhost:9090/'
 var XMLHttpRequest = require('xhr2');
 
-class UserAction{
+export class UserAction{
+    constructor(){}
+
     register(username:string,password:string) {
         var xhr = new XMLHttpRequest();
         let url = host + 'users';
         let send_data = JSON.stringify(new User(username,password));
         console.log("[POST] url: "+url+" data: "+send_data);
-    
+
+        let login = this.login
         xhr.open("POST", url, true);
         xhr.setRequestHeader( "Content-Type", "application/json");
         xhr.onreadystatechange = function() {
@@ -20,7 +23,7 @@ class UserAction{
                     let info = JSON.parse(xhr.responseText);
                     let new_user = new User(info.username,info.password,info.id,info.admin,info.profile,info.high_scores)
                     console.log(new_user)
-                    this.login(username,password)
+                    login(username,password)
                 }else{
                     dispatcher.dispatch({
                         actionTypes: actionTypes.ERROR,
@@ -37,7 +40,7 @@ class UserAction{
         let url = host + 'login';
         let send_data = JSON.stringify(new User(username,password));
         console.log("[POST] url: "+url+" data: "+send_data);
-    
+        let getUserInfo = this.getUserInfo
         xhr.open("POST", url, true);
         xhr.setRequestHeader( "Content-Type", "application/json");
         xhr.onreadystatechange = function() {
@@ -51,7 +54,7 @@ class UserAction{
                         token: token,
                         id:userId
                     });
-                    this.getUserInfo(userId,token)
+                    getUserInfo(userId,token)
                 }else{
                     dispatcher.dispatch({
                         actionTypes: actionTypes.ERROR,
@@ -120,13 +123,13 @@ class UserAction{
         let url = host + 'users/'+user.id+"?token="+token;
         let send_data = JSON.stringify(user);
         console.log("[PATCH] url: "+url+" data: "+send_data);
-    
+        let getUserInfo = this.getUserInfo
         xhr.open("PATCH", url, true);
         xhr.setRequestHeader( "Content-Type", "application/json");
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4) {
                 if (xhr.status==200){
-                    this.getUserInfo(user.id,token)
+                    getUserInfo(user.id,token)
                 }else{
                     dispatcher.dispatch({
                         actionTypes: actionTypes.ERROR,

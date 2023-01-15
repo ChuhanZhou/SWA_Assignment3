@@ -6,96 +6,130 @@ import game_store from '../stores/gameStore'
 import { User } from '../models/user';
 import { render } from 'react-dom'
 import {Link,useLocation} from 'react-router-dom'
-
-interface stateType{
-    userInfo: User;
-}
-
-const { state } = useLocation<stateType>();
-
-const showUserInfo : React.FC<Props> = (props) => {
-    const { username,logout,userInfo } = props
-    return (<div className='userIn'>
-                <div>Hi!{username}</div>
-                <div>Description : {userInfo.getProfile}</div>
-                <div>Scores : {userInfo.getHighScores}</div>
-                <button onClick={}>EditDescription</button>
-                <button onClick={}>Change password</button>
-                <button onClick={logout}>Logout</button>
-        </div>)
-}
-
-const editUserInfo : React.FC<Props> = (props) => {
-    const { description,userInfo,updateProfile } = props
-    return (<div className='userInEdit'>
-        <div>Description :</div>
-        <textarea value={description}></textarea>
-        <button onClick={updateProfile}>Save</button>
-        </div>)
-}
-
-const editPassword : React.FC<Props> = (props) => {
-    const { username,password,userInfo,changePassword } = props
-    return (<div className='userInEdit'>
-        <div>Description :</div>
-        <textarea ></textarea>
-        <div>Old Password : </div><input className='password' value={password}></input>
-        <div>New Password : </div><input className='password' value={password}></input>
-        <button onClick={changePassword}>Save</button>
-        </div>)
-}
+import { useState, useEffect } from 'react';
+import { Score } from '../models/score';
 
 
+var OldPassword = undefined;
+var NewPassword = undefined;
+var error = undefined;
+var textarea = undefined;
 
-interface IUserStateProps {
-    username: string
-    password: string
-    userInfo: User
-    description: string
-  }
+export class ShowHome extends React.Component<{},{username:string,password:string,profile:string,Profiledispaly:string,passdispaly:string}>{
+    constructor(props){
+      super(props)
+      this.state = { username: user_store.getUser().getUsername(),
+      password: user_store.getUser().password,
+      profile: user_store.getUser().getProfile(),
+      Profiledispaly: 'none',
+      passdispaly: 'none'
+      }
 
-  interface IUserActionProps {
-    logout: (token:string)=>void
-    updateProfile: (user:User,token:string)=>void
-    changePassword: (user:User,token:string)=>void
-  }
-  type Props = IUserStateProps & IUserActionProps
-
-
-const mapStateToProps = (state2: GameStore): IUserStateProps => {
-    const { user } = state.userInfo
-    return {
-      username: user.username,
-      password: user.password,
-      userInfo: user,
-      description: user.profile,
+      OldPassword = document.getElementById('oldP') as HTMLInputElement;
+      NewPassword = document.getElementById('newP') as HTMLInputElement;
+      error = document.getElementById('errorP') as HTMLLabelElement;
+      textarea = document.getElementById('textarea') as HTMLTextAreaElement;
+     
+      user_store.addLogoutListener(()=>{console.log("logout")}) 
+      user_store.addUserInfoListener(()=>{console.log("userInfo changed")})
     }
+
+    getScores=user_store.getUser().getHighScores().map((value:Score,index:number)=>{
+      return (<tr>
+        <td>{value.score}</td>
+        <td>{value.create_time}</td>
+    </tr>)
+    })
+    
+
+    render() {return (<div className='userIn'>
+    <div>Hi! {this.state.username}</div>
+    <div>Description : {this.state.profile}</div>
+
+    <textarea id='textarea' style={{display:this.state.Profiledispaly}}></textarea>
+    <button type='button' style={{display:this.state.Profiledispaly}} onClick={()=>ChangePro}>save</button>
+
+    <div>Scores : </div>
+    <div><table>
+            <tbody>
+                {this.getScores}
+            </tbody>
+        </table></div>
+    <button type='button' onClick={()=>toChangePr()}>EditDescription</button>
+    <button type='button' onClick={()=>toChangePa()}>Change password</button>
+
+    <div style={{display:this.state.passdispaly}}>Old password : </div><input id='oldP' style={{display:this.state.passdispaly}}></input>
+    <div style={{display:this.state.passdispaly}}>New password : </div><input id='newP' style={{display:this.state.passdispaly}}></input>
+    <label id='errorP' style={{display:'none',color:'red'}}></label>    
+    <button type='button' style={{display:'none'}} onClick={()=>toChangePa()}>save</button>
+
+    <button type='button' onClick={()=>ChangeP()}>Change password</button>
+    <button type='button' onClick={()=>logout()}>Logout</button>
+    <br/>
+    <button type='button' onClick={()=>startGame()}>Start Game</button>
+</div>)}
+    
+    
   }
 
-const mapUserActionToProps = (userAction: UserAction,state: UserStore): IUserActionProps => {
-    const { user } = state
-    return {  
-        logout: () => userAction.logout(user.getUser().token),
-        updateProfile: (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-            let old = user.getUser()
-            const profile = e.target.value
-            old.setProfile(profile)
-            userAction.updateUserInfo(old,user.getToken())
-        },
-        changePassword: (e1: React.ChangeEvent<HTMLInputElement>,e2: React.ChangeEvent<HTMLInputElement>) => {
-            const oldPassword = e1.target.value
-            const newPassword = e2.target.value
-            let old = user.getUser()
-            if (old.isTruePassword(oldPassword)){
-                old.changePassword(oldPassword,newPassword)
-            }else{
-                old.changePassword(newPassword,oldPassword)
-            }
-            userAction.updateUserInfo(old,user.getToken())
-            
-        },
+  function getOldPassword(){
+    if (OldPassword==null){
+      OldPassword = document.getElementById('oldP') as HTMLInputElement;
     }
+    return OldPassword
   }
 
-UserStore.addUserInfoListener(mapUserActionToProps)
-UserStore.addErrorListener(mapUserActionToProps)
+  function getNewPassword(){
+    if (NewPassword==null){
+      NewPassword = document.getElementById('newP') as HTMLInputElement;
+    }
+    return NewPassword
+  }
+
+  function getNewProfile(){
+    if (textarea==null){
+      textarea = document.getElementById('textarea') as HTMLTextAreaElement;
+    }
+    return textarea
+  }
+
+  function logout()
+  {
+    user_action.logout(user_store.getToken());
+    this.props.history.push({ pathname: '/view_new'})
+  }
+
+  function toChangePa(){
+    this.state.passdispaly = 'block'
+
+  }
+
+  function toChangePr(){
+    this.state.Profiledispaly = 'block'
+
+  }
+
+  function ChangeP(){
+    let old = user_store.getUser()
+    if (old.isTruePassword(getOldPassword().value)){
+      old.changePassword(getOldPassword().value,getNewPassword().value)
+      this.state.passdispaly = 'none'
+    }else{
+        old.changePassword(getNewPassword().value,getOldPassword().value)
+        error.textContent = "the old password is not correct"
+    }
+    user_action.updateUserInfo(old,user_store.getToken())
+  }
+
+  function ChangePro(){
+    let old = user_store.getUser()
+    old.setProfile(getNewProfile().textContent)
+    user_action.updateUserInfo(old,user_store.getToken())
+    this.state.Profiledispaly = 'none'
+  }
+
+  function startGame(){
+    this.props.history.push({ pathname: '/game' })
+  }
+
+

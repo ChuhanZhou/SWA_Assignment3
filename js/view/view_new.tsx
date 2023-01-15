@@ -4,60 +4,110 @@ import user_action from '../actions/userAction'
 import user_store from '../stores/userStore'
 import { User } from '../models/user';
 import * as ReactDOM from 'react-dom'
-import {Link} from 'react-router-dom'
+import {render} from 'react-dom'
+import {Link, Router} from 'react-router-dom'
+import { useState, useEffect } from 'react';
 
-function userLogin(p: Props) {
-  const { username,password,loginU,userInfo} = p
-  return (<Link to={{ pathname: '/home', state : { userInfo} }}/>)
+
+
+var username = undefined;
+var password = undefined;
+var error = undefined;
+
+class UserLoginAndRegister extends React.Component{
+    constructor(props){
+      super(props)
+      username = document.getElementById('username') as HTMLInputElement;
+      password = document.getElementById('password') as HTMLInputElement;
+      error = document.getElementById('errorRL') as HTMLLabelElement;
+      
+      user_store.addLoginListener(()=>{console.log("login successed")}) 
+      user_store.addErrorListener(hasError)
+    }
+
+    render() {return (<form className='loginForm'>
+    <div>Username : </div><input id='username'></input>
+    <div>Password : </div><input id='password'></input>
+    <label id='errorRL' style={{color:'red'}}></label>    
+      <button type='button' id='btnL' onClick={()=>loginUser()}>Login</button>
+    <button type='button' id='btnR' onClick={()=>registerUser()}>Register</button>
+    </form>
+    
+    )}
+    
+    
+  }
+
+function getUserName(){
+  if (username==null){
+    username = document.getElementById('username') as HTMLInputElement;
+  }
+  return username
 }
 
-const loginUser : React.FC<Props> = (props) => {
-    const { username,password,loginU,error } = props
-    return (<form className='loginForm'>
-        <div>Username : </div><input id='usernameL' value={username}></input>
-        <div>Password : </div><input id='passwordL' value={password}></input>
-        <label className='error'></label>
-        <button id='btnL' onClick={()=>loginU}>Login</button>
-        </form>)
+function getPassword(){
+  if (password==null){
+    password = document.getElementById('password') as HTMLInputElement;
+  }
+  return password
 }
 
-const registerUser : React.FC<Props> = (props) => {
-    const { username,password,registerU,error } = props
-    return (<form className='loginForm'>
-        <div>Username : </div><input id='usernameR' value={username}></input>
-        <div>Password : </div><input id='passwordR' value={password}></input>
-        <label className='error'></label>
-        <button id='btnR' onClick={()=>registerU}>Register</button>
-        </form>)
+function getError(){
+  if (error==null){
+    error = document.getElementById('errorRL') as HTMLLabelElement;
+  }
+  return error
 }
+
+function loginUser(){
+      console.log("login")
+      //username = document.getElementById('username') as HTMLInputElement;
+      console.log(getUserName().value)
+      user_action.login(getUserName().value,getPassword().value);
+      
+}
+
+function registerUser(){
+  user_action.register(getUserName().value,getPassword().value);
+  console.log("resgister")
+}
+
+function hasError(){
+  getError().textContent = user_store.getError();
+  console.log("error");
+}
+
+
+
 
 interface IUserStateProps {
-    username: string
-    password: string
-    error: string
-    userInfo: User
+    username?: string
+    password?: string
+    error?: string
+    userInfo?: string
   }
 
 interface IUserActionProps {
-  loginU: (username:string,password:string) => void
-  registerU: (username:string,password:string) => void
-  logout: (token:string)=>void
-  updateProfile: (profile:React.ChangeEvent<HTMLTextAreaElement>)=>void
-  changePassword: (old_password:React.ChangeEvent<HTMLInputElement>,new_password:React.ChangeEvent<HTMLInputElement>)=>void
+  loginU?: (username:string,password:string) => void
+  registerU?: (username:string,password:string) => void
+  logout?: (token:string)=>void
+  updateProfile?: (profile:React.ChangeEvent<HTMLTextAreaElement>)=>void
+  changePassword?: (old_password:React.ChangeEvent<HTMLInputElement>,new_password:React.ChangeEvent<HTMLInputElement>)=>void
 }
 
 type Props = IUserStateProps & IUserActionProps
 
-const mapStateToProps = (): IUserStateProps => {
+const MapStateToProps = (): IUserStateProps => {
     return {
       username: user_store.getUser().username,
       password: user_store.getUser().password,
       error: user_store.getError(),
-      userInfo: user_store.getUser()
+      userInfo: user_store.getUser().profile
     }
   }
 
-  const mapUserActionToProps = (): IUserActionProps => {
+  const MapUserActionToProps = (): IUserActionProps => {
+    console.log("use function")
     return {  
         loginU: () => user_action.login(user_store.getUser().username,user_store.getUser().password),
         registerU: () => user_action.register(user_store.getUser().username,user_store.getUser().password),
@@ -77,14 +127,15 @@ const mapStateToProps = (): IUserStateProps => {
             }else{
                 old.changePassword(newPassword,oldPassword)
             }
-            user_action.updateUserInfo(old,user_store.getToken())
-            
+            user_action.updateUserInfo(old,user_store.getToken())  
         },
     }
   }
 
-user_store.addLoginListener(mapUserActionToProps)
-user_store.addLogoutListener(mapUserActionToProps)
-user_store.addUserInfoListener(mapUserActionToProps)
-user_store.addErrorListener(mapUserActionToProps)
 
+
+function Hello() {
+  return (<UserLoginAndRegister/>)
+}
+
+export default Hello;
