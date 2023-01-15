@@ -8,6 +8,9 @@ import { render } from 'react-dom'
 import {Link,useLocation} from 'react-router-dom'
 import { useState, useEffect } from 'react';
 import { Score } from '../models/score';
+import View from "./view_new";
+import Game from "./game";
+import * as ReactDOM from 'react-dom'
 
 
 var OldPassword = undefined;
@@ -96,7 +99,7 @@ export class ShowHome extends React.Component<{},{username:string,password:strin
   function logout()
   {
     user_action.logout(user_store.getToken());
-    this.props.history.push({ pathname: '/view_new'})
+    ReactDOM.render(<View/>, document.getElementById('root'));
   }
 
   function toChangePa(){
@@ -129,7 +132,7 @@ export class ShowHome extends React.Component<{},{username:string,password:strin
   }
 
   function startGame(){
-    this.props.history.push({ pathname: '/game' })
+    ReactDOM.render(<Game/>, document.getElementById('root'));
   }
 
   function Home() {

@@ -8,7 +8,7 @@ var host = 'http://localhost:9090/'
 var XMLHttpRequest = require('xhr2');
 
 class GameAction{
-    getAllGameData(id: number, token: string) {
+    getAllGameData(id: number|null, token: string) {
         var xhr = new XMLHttpRequest();
         let url = host + 'games' + "?token=" + token;
         console.log(chalk.blue("Requesting: ", url));
