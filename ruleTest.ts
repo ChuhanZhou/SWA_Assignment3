@@ -37,7 +37,6 @@ function testLogin() {
     // postGameData(game,user.id,token)
     game_action.getAllGameData(token)
     game_action.getGameData(6,token)
-
 }
 
 function getGames(){

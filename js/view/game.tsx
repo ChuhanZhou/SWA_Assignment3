@@ -37,15 +37,11 @@ export class GameBoard extends React.Component<{},{pieceList:Piece<string>[][],s
     })
 
     game_store.addGameARRListener(()=>{
-        console.log("game ARP changed")
+        let g =game_store.getGameArray()
+        console.log("game ARP changed"+g)
 
     })
-}
-
-
-
-
-    
+}    
 
      //getPieces=this.state.pieceList.map((pieces,index) => {
      //  return pieces.map((piece,j)=>{
@@ -82,9 +78,11 @@ export class GameBoard extends React.Component<{},{pieceList:Piece<string>[][],s
                 showrank:'block',
                 rank: game_store.getGameArray()
             })
-            console.log(this.state.rank+"5555555555555")
+            console.log(game_action.getAllGameData+"5555555555555")
             game_action.postGameData(game_store.getBoard(),user_store.getUser().id,user_store.getToken())
-            
+            let user = user_store.getUser()
+            user.addNewScore(this.state.points)
+            user_action.updateUserInfo(user,user_store.getToken())
 
         }
         }
@@ -100,7 +98,12 @@ export class GameBoard extends React.Component<{},{pieceList:Piece<string>[][],s
                 <div className='game' style={{display:this.state.showgame}}>
             <div>Steps left:  {this.state.steps}</div>
             <div>Total Score: {this.state.points}</div>
-          <div className='board'>
+          <div className='board' style={{width:'550px',
+                height:550px;
+                position:absolute;
+                background-color: antiquewhite;
+                margin-left:400px;
+                margin-top:100px;}}>
           {this.state.pieceList.map((pieces,index) => {
                 return pieces.map((piece,j)=>{
                     var idt = 'borad-item'+piece.getPosition().getRow()+piece.getPosition().getCol()
@@ -138,6 +141,7 @@ function clickItem(position:Position){
             this.setState.steps = game_store.getBoard().getOut_steps()
         }else{
             game_action.postGameData(game_store.getBoard(),user_store.getUser().id,user_store.getToken())
+            
         }
     }
     else{
