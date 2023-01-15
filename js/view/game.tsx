@@ -56,7 +56,6 @@ function clickItem(position:Position){
             this.setState.points = game_store.getBoard().getPoints()
             this.setState.steps = game_store.getBoard().getOut_steps()
         }else{
-            game_action.getAllGameData(user_store.getUser().id,user_store.getToken())
             game_action.postGameData(game_store.getBoard(),user_store.getUser().id,user_store.getToken())
 
         }
