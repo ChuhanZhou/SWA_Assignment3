@@ -137,6 +137,9 @@ export class ShowHome extends React.Component<{},{username:string,password:strin
 
     <div>Scores : </div>
     <div><table>
+      <thead>
+        <tr><th>Scrore</th><th>Datetime</th></tr>
+      </thead>
             <tbody>
                 {this.state.scores.map((value:Score,index:number)=>{
       return (<tr key={index}>

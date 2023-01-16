@@ -121,7 +121,12 @@ export class GameBoard extends React.Component<{},{pieceList:Piece<string>[][],s
           </div>
           <div className='rank' style={{display:this.state.showrank}}>
             <div>Congratulations! your score is {this.state.points}</div>
+            <br/>
+            <div>Top 10 RANK</div>
           <table>
+          <thead>
+        <tr><th>Id</th><th>Score</th></tr>
+      </thead>
             <tbody> 
             {this.state.rank.map((games,index) => {
                 return (<tr key={index}>
