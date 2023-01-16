@@ -14,7 +14,7 @@ var itemsSelected: Array<Position>;
 export class GameBoard extends React.Component<{},{pieceList:Piece<string>[][],steps:number,points:number,rank:Array<Game>,showgame:string,showrank:string}> {
     constructor(props) {
       super(props)
-       let type_list = ["A", "B", "C"]
+       let type_list = ["A", "B", "C", "D", "E"]
         let size = [5, 5]
         game_store.initGame(10, type_list, size)
         itemsSelected =[]
@@ -48,43 +48,40 @@ export class GameBoard extends React.Component<{},{pieceList:Piece<string>[][],s
     })
 }    
 
-        clickItem(position:Position){
-            if(this.state.steps<=0)
+clickItem(position:Position){
+    if(this.state.steps<=0)
+    {
+        this.setState({
+            showgame: 'none',
+            showrank:'block',
+            rank: game_store.getGameArray()
+        })
+        game_action.postGameData(game_store.getBoard(),user_store.getUser().id,user_store.getToken())
+        game_action.getAllGameData(user_store.getToken())
+        let user = user_store.getUser()
+        user.addNewScore(this.state.points)
+        user_action.updateUserInfo(user,user_store.getToken())
+    }
+    else{
+        if(itemsSelected.length==1)
             {
+                game_store.getBoard().play(itemsSelected[0],position)
+                itemsSelected =[]
                 this.setState({
-                    showgame: 'none',
-                    showrank:'block',
-                    rank: game_store.getGameArray()
+                    pieceList: game_store.getBoard().getGameBoard().piece_list,
+                    points : game_store.getBoard().getPoints(),
+                    steps : game_store.getBoard().getOut_steps(),
                 })
-                game_action.postGameData(game_store.getBoard(),user_store.getUser().id,user_store.getToken())
-                game_action.getAllGameData(user_store.getToken())
-                let user = user_store.getUser()
-                user.addNewScore(this.state.points)
-                user_action.updateUserInfo(user,user_store.getToken())
             }
         else{
-            if(itemsSelected.length==1)
-                {
-                    game_store.getBoard().play(itemsSelected[0],position)
-                    itemsSelected =[]
-                    this.setState({
-                        pieceList: game_store.getBoard().getGameBoard().piece_list,
-                        points : game_store.getBoard().getPoints(),
-                        steps : game_store.getBoard().getOut_steps(),
-                        
-                    })
-        
-                }
-            else{
-                itemsSelected.push(position)
-                this.setState({
-                    points : game_store.getBoard().getPoints(),
-                    steps : game_store.getBoard().getOut_steps()
-                })
-          }
-
+            itemsSelected.push(position)
+            this.setState({
+                points : game_store.getBoard().getPoints(),
+                steps : game_store.getBoard().getOut_steps()
+            })
         }
     }
+}
         
 
         back(){
