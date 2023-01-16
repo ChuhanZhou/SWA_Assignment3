@@ -140,13 +140,13 @@ export class ShowHome extends React.Component<{},{username:string,password:strin
       <thead>
         <tr><th>Scrore</th><th>Datetime</th></tr>
       </thead>
-            <tbody>
-                {this.state.scores.map((value:Score,index:number)=>{
-      return (<tr key={index}>
-        <td>{value.score}</td>
-        <td>{value.getCreateTime().toLocaleDateString()}</td>
-        <td>{value.getCreateTime().toLocaleTimeString()}</td>
-    </tr>)
+      <tbody>
+          {this.state.scores.map((value:Score,index:number)=>{
+          return (<tr key={index}>
+            <td>{value.score}</td>
+            <td>{value.getCreateTime().toLocaleDateString()}</td>
+            <td>{value.getCreateTime().toLocaleTimeString()}</td>
+          </tr>)
     })}
             </tbody>
         </table></div>
