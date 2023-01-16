@@ -17,7 +17,6 @@ export class GameBoard extends React.Component<{},{pieceList:Piece<string>[][],s
        let type_list = ["A", "B", "C"]
         let size = [5, 5]
         game_store.initGame(10, type_list, size)
-        console.log("HHHHHHHHHHHHHHHHHHHHHH"+game_store.getBoard())
         itemsSelected =[]
 
        this.state = {
@@ -49,17 +48,22 @@ export class GameBoard extends React.Component<{},{pieceList:Piece<string>[][],s
     })
 }    
 
-     //getPieces=this.state.pieceList.map((pieces,index) => {
-     //  return pieces.map((piece,j)=>{
-     //      var idt = 'borad-item'+piece.getPosition().getRow()+piece.getPosition().getCol()
-     //      return (<button style={{}} className='board-item' id={idt} onClick={()=>clickItem(piece.getPosition())}>{piece.type}</button>)
-     //  })       
-     //  })
-
         clickItem(position:Position){
-            if(this.state.steps>0)
+            if(this.state.steps<=0)
             {
-                if(itemsSelected.length==1)
+                this.setState({
+                    showgame: 'none',
+                    showrank:'block',
+                    rank: game_store.getGameArray()
+                })
+                game_action.postGameData(game_store.getBoard(),user_store.getUser().id,user_store.getToken())
+                game_action.getAllGameData(user_store.getToken())
+                let user = user_store.getUser()
+                user.addNewScore(this.state.points)
+                user_action.updateUserInfo(user,user_store.getToken())
+            }
+        else{
+            if(itemsSelected.length==1)
                 {
                     game_store.getBoard().play(itemsSelected[0],position)
                     itemsSelected =[]
@@ -77,25 +81,14 @@ export class GameBoard extends React.Component<{},{pieceList:Piece<string>[][],s
                     points : game_store.getBoard().getPoints(),
                     steps : game_store.getBoard().getOut_steps()
                 })
-            }
-        }else{
-            this.setState({
-                showgame: 'none',
-                showrank:'block',
-                rank: game_store.getGameArray()
-            })
-            game_action.postGameData(game_store.getBoard(),user_store.getUser().id,user_store.getToken())
-            game_action.getAllGameData(user_store.getToken())
-            let user = user_store.getUser()
-            user.addNewScore(this.state.points)
-            user_action.updateUserInfo(user,user_store.getToken())
+          }
 
         }
-        }
+    }
+        
 
         back(){
             ReactDOM.render(<Home/>, document.getElementById('root'));
-
         }
 
       render() {
@@ -118,6 +111,7 @@ export class GameBoard extends React.Component<{},{pieceList:Piece<string>[][],s
         })       
         })}
           </div>
+          
           </div>
           <div className='rank' style={{display:this.state.showrank}}>
             <div>Congratulations! your score is {this.state.points}</div>
