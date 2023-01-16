@@ -11,11 +11,11 @@ import * as ReactDOM from 'react-dom'
 //import './style.css'
 
 var itemsSelected: Array<Position>;
-export class GameBoard extends React.Component<{},{pieceList:Piece<string>[][],steps:number,points:number,rank:Game[],showgame:string,showrank:string}> {
+export class GameBoard extends React.Component<{},{pieceList:Piece<string>[][],steps:number,points:number,rank:Array<Game>,showgame:string,showrank:string}> {
     constructor(props) {
       super(props)
        let type_list = ["A", "B", "C"]
-        let size = [6, 6]
+        let size = [5, 5]
         game_store.initGame(10, type_list, size)
         console.log("HHHHHHHHHHHHHHHHHHHHHH"+game_store.getBoard())
         itemsSelected =[]
@@ -37,9 +37,15 @@ export class GameBoard extends React.Component<{},{pieceList:Piece<string>[][],s
     })
 
     game_store.addGameARRListener(()=>{
-        let g =game_store.getGameArray()
-        console.log("game ARP changed"+g)
-
+        let gameA =game_store.getGameArray()
+        console.log("game ARP changed"+gameA.length)
+        gameA.forEach(ele=>{
+            console.log(ele.getScore())
+        })
+        this.setState({
+            rank : game_store.getGameArray()
+            
+        })
     })
 }    
 
@@ -78,8 +84,8 @@ export class GameBoard extends React.Component<{},{pieceList:Piece<string>[][],s
                 showrank:'block',
                 rank: game_store.getGameArray()
             })
-            console.log(game_action.getAllGameData+"5555555555555")
             game_action.postGameData(game_store.getBoard(),user_store.getUser().id,user_store.getToken())
+            game_action.getAllGameData(user_store.getToken())
             let user = user_store.getUser()
             user.addNewScore(this.state.points)
             user_action.updateUserInfo(user,user_store.getToken())
@@ -98,16 +104,17 @@ export class GameBoard extends React.Component<{},{pieceList:Piece<string>[][],s
                 <div className='game' style={{display:this.state.showgame}}>
             <div>Steps left:  {this.state.steps}</div>
             <div>Total Score: {this.state.points}</div>
-          <div className='board' style={{width:'550px',
-                height:550px;
-                position:absolute;
-                background-color: antiquewhite;
-                margin-left:400px;
-                margin-top:100px;}}>
+          <div className='board' style={{width:'550px',height:'550px', position:'absolute',backgroundColor: 'antiquewhite',marginLeft:'400px',marginTop:'100px'}}>
           {this.state.pieceList.map((pieces,index) => {
                 return pieces.map((piece,j)=>{
                     var idt = 'borad-item'+piece.getPosition().getRow()+piece.getPosition().getCol()
-                    return (<button key={j} className='board-item' id={idt} onClick={()=>this.clickItem(piece.getPosition())}>{piece.type}</button>)
+                    return (<button style={{float: 'left',
+                        width:'100px',
+                        height:'100px',
+                        backgroundColor:'rgb(229, 229, 229)',
+                        textAlign:'center',
+                        lineHeight:'100px',
+                        border:'1px solid #fff'}} key={j} className='board-item' id={idt} onClick={()=>this.clickItem(piece.getPosition())}>{piece.type}</button>)
         })       
         })}
           </div>
@@ -117,7 +124,7 @@ export class GameBoard extends React.Component<{},{pieceList:Piece<string>[][],s
           <table>
             <tbody> 
             {this.state.rank.map((games,index) => {
-                return (<tr>
+                return (<tr key={index}>
                     <td>{games.getId()}</td>
                     <td>{games.getScore()}</td>
                 </tr>)      
@@ -130,25 +137,6 @@ export class GameBoard extends React.Component<{},{pieceList:Piece<string>[][],s
     } 
 }
 
-function clickItem(position:Position){
-    if(itemsSelected.length==1)
-    {
-        if(this.state.steps>0)
-        {
-            game_store.getBoard().play(itemsSelected[0],position)
-            itemsSelected =[]
-            this.setState.points = game_store.getBoard().getPoints()
-            this.setState.steps = game_store.getBoard().getOut_steps()
-        }else{
-            game_action.postGameData(game_store.getBoard(),user_store.getUser().id,user_store.getToken())
-            
-        }
-    }
-    else{
-        itemsSelected.push(position)
-    }
-    
-}
 
 function Gameboard() {
     return (<GameBoard/>)

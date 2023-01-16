@@ -24,30 +24,33 @@ var textarea = undefined;
 //var Profiledispaly= 'none';
 //var passdispaly= 'none'
 var timer
-export class ShowHome extends React.Component<{},{username:string,password:string,profile:string,Profiledispaly:string, passdispaly:string}> {
+export class ShowHome extends React.Component<{},{username:string,password:string,profile:string,scores:Score[],Profiledispaly:string, passdispaly:string}> {
     constructor(props){
       super(props)
       this.state = {
         username : user_store.getUser().getUsername(),
         password : user_store.getUser().password,
         profile : user_store.getUser().getProfile(),
+        scores : user_store.getUser().getHighScores(),
         Profiledispaly: 'none',
         passdispaly: 'none'
     }
+
+
+
+
+    
 
     timer = setInterval(() => {
         this.setState({
           username : user_store.getUser().getUsername(),
           password : user_store.getUser().password,
-          profile : user_store.getUser().getProfile()
+          profile : user_store.getUser().getProfile(),
+          scores : user_store.getUser().getHighScores(),
         })
     }, 1000)
  
-      OldPassword = document.getElementById('oldP') as HTMLInputElement;
-      NewPassword = document.getElementById('newP') as HTMLInputElement;
-      error = document.getElementById('errorP') as HTMLLabelElement;
-      textarea = document.getElementById('textarea') as HTMLTextAreaElement;
-     
+    
       user_store.addLogoutListener(()=>{console.log("logout")}) 
       user_store.addUserInfoListener(()=>{
         console.log("userInfo changed")
@@ -58,6 +61,13 @@ export class ShowHome extends React.Component<{},{username:string,password:strin
       })
 
       
+    }
+
+    componentDidMount():void{
+      OldPassword = document.getElementById('oldP') as HTMLInputElement;
+      NewPassword = document.getElementById('newP') as HTMLInputElement;
+      error = document.getElementById('errorP') as HTMLLabelElement;
+      textarea = document.getElementById('textarea') as HTMLTextAreaElement;
     }
 
     startGame(){
@@ -85,8 +95,8 @@ export class ShowHome extends React.Component<{},{username:string,password:strin
 
     changeP(){
       let old = user_store.getUser()
-      if (getOldPassword().value==this.state.password){
-        old.changePassword(this.state.password,getNewPassword().value)
+      if (OldPassword.value==this.state.password){
+        old.changePassword(this.state.password,NewPassword.value)
         user_action.updateUserInfo(old,user_store.getToken())
           this.setState({
             username : user_store.getUser().getUsername(),
@@ -96,7 +106,7 @@ export class ShowHome extends React.Component<{},{username:string,password:strin
           })
       }else{
           //old.changePassword(getNewPassword().value,getOldPassword().value)
-          getError().textContent = "the old password is not correct"
+          error.textContent = "the old password is not correct"
           console.log("the old password is not correct")
       }
       
@@ -104,8 +114,8 @@ export class ShowHome extends React.Component<{},{username:string,password:strin
 
     changePro(){
       let old = user_store.getUser()
-      old.setProfile(getNewProfile().value)
-      console.log(getNewProfile().value)
+      old.setProfile(textarea.value)
+      console.log(textarea.value)
       user_action.updateUserInfo(old,user_store.getToken())
         this.setState({
           username : user_store.getUser().getUsername(),
@@ -115,12 +125,7 @@ export class ShowHome extends React.Component<{},{username:string,password:strin
         })
     }
 
-    getScores=user_store.getUser().getHighScores().map((value:Score,index:number)=>{
-      return (<tr>
-        <td>{value.score}</td>
-        <td>{value.create_time}</td>
-    </tr>)
-    })
+    
     
 
     render() {return (<div className='userIn'>
@@ -133,7 +138,13 @@ export class ShowHome extends React.Component<{},{username:string,password:strin
     <div>Scores : </div>
     <div><table>
             <tbody>
-                {this.getScores}
+                {this.state.scores.map((value:Score,index:number)=>{
+      return (<tr key={index}>
+        <td>{value.score}</td>
+        <td>{value.getCreateTime().toLocaleDateString()}</td>
+        <td>{value.getCreateTime().toLocaleTimeString()}</td>
+    </tr>)
+    })}
             </tbody>
         </table></div>
     <button type='button' onClick={()=>this.toChangePro()}>EditDescription</button>
@@ -152,40 +163,6 @@ export class ShowHome extends React.Component<{},{username:string,password:strin
     
   }
 
- //function updateUserInfo(){
- //  username =user_store.getUser().getUsername();
- //  password =  user_store.getUser().password;
- //  profile =  user_store.getUser().getProfile();
- //  console.log(username)
- //}
-
-  function getOldPassword(){
-    if (OldPassword==null){
-      OldPassword = document.getElementById('oldP') as HTMLInputElement;
-    }
-    return OldPassword
-  }
-
-  function getNewPassword(){
-    if (NewPassword==null){
-      NewPassword = document.getElementById('newP') as HTMLInputElement;
-    }
-    return NewPassword
-  }
-
-  function getError(){
-    if (error==null){
-      error = document.getElementById('errorP') as HTMLLabelElement;
-    }
-    return error
-  }
-
-  function getNewProfile(){
-    if (textarea==null){
-      textarea = document.getElementById('textarea') as HTMLTextAreaElement;
-    }
-    return textarea
-  }
 
   function logout()
   {
@@ -193,66 +170,6 @@ export class ShowHome extends React.Component<{},{username:string,password:strin
     ReactDOM.render(<View/>, document.getElementById('root'));
   }
 
-  function toChangePa(){
-    setInterval(() => {
-      this.setState({
-        username : user_store.getUser().getUsername(),
-        password : user_store.getUser().password,
-        profile : user_store.getUser().getProfile(),
-        passdispaly : 'block'
-      })
-  }, 1000)
-    
-
-  }
-
-  function toChangePr(){
-    setInterval(() => {
-      this.setState({
-        username : user_store.getUser().getUsername(),
-        password : user_store.getUser().password,
-        profile : user_store.getUser().getProfile(),
-        Profiledispaly : 'block'
-      })
-  }, 1000)
-    
-  }
-
-  function ChangeP(){
-    let old = user_store.getUser()
-    if (old.isTruePassword(getOldPassword().value)){
-      old.changePassword(getOldPassword().value,getNewPassword().value)
-        this.setState({
-          username : user_store.getUser().getUsername(),
-          password : user_store.getUser().password,
-          profile : user_store.getUser().getProfile(),
-          passdispaly : 'none'
-        })
-    }else{
-        old.changePassword(getNewPassword().value,getOldPassword().value)
-        error.textContent = "the old password is not correct"
-    }
-    user_action.updateUserInfo(old,user_store.getToken())
-  }
-
-  function ChangePro(){
-    let old = user_store.getUser()
-    old.setProfile(getNewProfile().textContent)
-    user_action.updateUserInfo(old,user_store.getToken())
-    setInterval(() => {
-      this.setState({
-        username : user_store.getUser().getUsername(),
-        password : user_store.getUser().password,
-        profile : user_store.getUser().getProfile(),
-        Profiledispaly : 'none'
-      })
-  }, 1000)
-  }
-
-  function startGame(){
-    ReactDOM.render(<Gameboard/>, document.getElementById('root'));
-    //clearTimeout(this.timer)
-  }
 
   function Home() {
     return (<ShowHome/>)
